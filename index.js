@@ -30,6 +30,7 @@ const typeDefs = gql`
     type Query {
         usuario: Usuario
         produtos: [Produto]
+        produto(nome: String): Produto
     }
 `
 
@@ -44,9 +45,11 @@ const resolvers = {
                 idade: 28,
             }
         },
-
         produtos() {
             return produtos
+        },
+        produto(_, args) {
+            return produtos.find( produto => produto.nome === args.nome)
         }
     }
 }
