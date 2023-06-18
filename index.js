@@ -10,46 +10,68 @@ const produtos = [
   { id: 2, nome: "Short", valor: 50.0 },
 ];
 
-const typeDefs = gql`
-    type Produto {
-        id: ID
-        nome: String
-        valor: Float
-        disponivel: Boolean
+const db = [
+    {
+        id: 1,
+        nome: "Matehus",
+        email: "matheus@matheus.com",
+        telefone_fixo: "10 33785819",
+        perfil: 1
+    },
+    {
+        id: 2,
+        nome: "Matilda",
+        email: "matilda@matilda.com",
+        telefone_fixo: "10 33154516",
+        perfil: 2
     }
+]
+
+const perfis = [
+    { id: 1, descricao: "GOLD" },
+    { id: 2, descricao: "SILVER" }
+]
+
+const typeDefs = gql`
 
     type Usuario {
-        idade: Int
-        salario: Float
-        nome: String
-        ativo: Boolean
         id: ID
-        tecnologias: [String]!
+        nome: String
+        email: String
+        telefone: String
+        perfil: Perfil
+    }
+
+    type Perfil {
+        id: Int
+        descricao: String
     }
 
     type Query {
-        usuario: Usuario
-        produtos: [Produto]
-        produto(nome: String): Produto
+        usuario(id: Int): Usuario
+        perfis: [Perfil]
+
     }
 `
 
 const resolvers = {
+    
+    Usuario: {
+        perfil(usuario) {
+            const lista = perfis.find(i => i.id == usuario.perfil)
+            return lista
+        },
+        telefone(obj) {
+            const telefone = obj.telefone_fixo
+            return telefone
+        }
+    },
     Query: {
-        usuario() {
-            return {
-                id: 1,
-                nome: "Matheus",
-                salario: 30000.00,
-                ativo: true,
-                idade: 28,
-            }
+        usuario(_, args) {
+            return db.find(db => db.id === args.id)
         },
-        produtos() {
-            return produtos
-        },
-        produto(_, args) {
-            return produtos.find( produto => produto.nome === args.nome)
+        perfis() {
+            return perfis
         }
     }
 }
